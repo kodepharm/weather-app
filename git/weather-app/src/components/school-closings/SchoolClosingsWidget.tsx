@@ -93,7 +93,7 @@ export default function SchoolClosingsWidget() {
                 <p className="text-xs">{date}</p>
               </div>
               <div className="w-px h-6 bg-slate-700/60 shrink-0" />
-              <p className="text-white text-sm font-medium truncate">{event.school_name}</p>
+              <p className="text-white text-sm font-medium truncate">{event.notes || event.school_name}</p>
             </div>
           )
         })}
