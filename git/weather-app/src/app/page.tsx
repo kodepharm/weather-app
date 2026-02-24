@@ -7,9 +7,11 @@ import LocationSearch from '@/components/weather/LocationSearch'
 import CurrentWeather from '@/components/weather/CurrentWeather'
 import WeatherDetails from '@/components/weather/WeatherDetails'
 import ForecastStrip from '@/components/weather/ForecastStrip'
+import PrayerTimes from '@/components/weather/PrayerTimes'
 import SchoolClosingsWidget from '@/components/school-closings/SchoolClosingsWidget'
 import { useWeather } from '@/hooks/useWeather'
 import { useForecast } from '@/hooks/useForecast'
+import { usePrayer } from '@/hooks/usePrayer'
 
 const LOCATION_KEY = 'weather_location'
 const REFRESH_INTERVAL = 10 * 60 * 1000 // 10 minutes
@@ -18,6 +20,7 @@ export default function HomePage() {
   const [savedLocation, setSavedLocation] = useState('')
   const { data: weather, loading: weatherLoading, error: weatherError, fetchWeather } = useWeather()
   const { days, loading: forecastLoading, error: forecastError, fetchForecast } = useForecast()
+  const { data: prayerData, fetchPrayer } = usePrayer()
 
   useEffect(() => {
     const saved = localStorage.getItem(LOCATION_KEY)
@@ -26,6 +29,13 @@ export default function HomePage() {
       Promise.all([fetchWeather(saved), fetchForecast(saved)])
     }
   }, [fetchWeather, fetchForecast])
+
+  // Fetch prayer times whenever weather coordinates change
+  useEffect(() => {
+    if (weather?.coord) {
+      fetchPrayer(weather.coord.lat, weather.coord.lon)
+    }
+  }, [weather?.coord?.lat, weather?.coord?.lon, fetchPrayer])
 
   // Auto-refresh weather every 10 minutes
   useEffect(() => {
@@ -93,9 +103,10 @@ export default function HomePage() {
             <CurrentWeather data={weather} />
             <WeatherDetails data={weather} />
           </div>
-          {/* Right: forecast + school closings */}
+          {/* Right: forecast + prayer times + school closings */}
           <div className="flex flex-col gap-2 min-h-0">
             {days.length > 0 && <ForecastStrip days={days} />}
+            {prayerData && <PrayerTimes data={prayerData} />}
             <SchoolClosingsWidget />
           </div>
         </div>

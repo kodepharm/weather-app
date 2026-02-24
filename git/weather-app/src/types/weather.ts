@@ -1,4 +1,8 @@
 export interface CurrentWeatherData {
+  coord: {
+    lat: number
+    lon: number
+  }
   name: string
   sys: {
     country: string
