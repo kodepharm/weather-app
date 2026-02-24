@@ -7,6 +7,7 @@ interface WeatherState {
   data: CurrentWeatherData | null
   loading: boolean
   error: string | null
+  lastUpdated: Date | null
 }
 
 interface UseWeatherReturn extends WeatherState {
@@ -18,10 +19,12 @@ export function useWeather(): UseWeatherReturn {
     data: null,
     loading: false,
     error: null,
+    lastUpdated: null,
   })
 
   const fetchWeather = useCallback(async (q: string) => {
-    setState({ data: null, loading: true, error: null })
+    // Keep existing data visible during background refreshes — no flicker
+    setState(prev => ({ ...prev, loading: true, error: null }))
     try {
       const res = await fetch(`/api/weather?q=${encodeURIComponent(q)}`)
       if (!res.ok) {
@@ -29,9 +32,10 @@ export function useWeather(): UseWeatherReturn {
         throw new Error(err.message || `Request failed: ${res.status}`)
       }
       const data: CurrentWeatherData = await res.json()
-      setState({ data, loading: false, error: null })
+      setState({ data, loading: false, error: null, lastUpdated: new Date() })
     } catch (e) {
-      setState({ data: null, loading: false, error: (e as Error).message })
+      // On failure keep whatever data was already on screen
+      setState(prev => ({ ...prev, loading: false, error: (e as Error).message }))
     }
   }, [])
 

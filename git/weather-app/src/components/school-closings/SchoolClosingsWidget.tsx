@@ -75,7 +75,7 @@ export default function SchoolClosingsWidget() {
       <div className="flex items-center justify-between px-4 py-3 border-b border-slate-700/50">
         <div className="flex items-center gap-2">
           <span className="text-xl">🏫</span>
-          <h2 className="text-white font-semibold text-lg">School Closings &amp; Events</h2>
+          <h2 className="text-slate-400 font-semibold text-lg">School Closings &amp; Events</h2>
         </div>
         <Link href="/school-closings" className="text-sm text-sky-400 hover:text-sky-300 transition-colors">
           Manage →

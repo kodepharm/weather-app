@@ -13,18 +13,42 @@ import { useForecast } from '@/hooks/useForecast'
 import { usePrayer } from '@/hooks/usePrayer'
 
 const LOCATION_KEY = 'weather_location'
-const REFRESH_INTERVAL = 10 * 60 * 1000 // 10 minutes
+const REFRESH_INTERVAL = 10 * 60 * 1000  // 10 minutes
+const STALE_THRESHOLD  = 15 * 60 * 1000  // 15 minutes
+const SHIFT_INTERVAL   =  4 * 60 * 1000  //  4 minutes
 
 export default function HomePage() {
   const [savedLocation, setSavedLocation] = useState('')
-  const { data: weather, loading: weatherLoading, error: weatherError, fetchWeather } = useWeather()
+  const { data: weather, loading: weatherLoading, error: weatherError, lastUpdated, fetchWeather } = useWeather()
   const { days, fetchForecast } = useForecast()
   const { data: prayerData, fetchPrayer } = usePrayer()
 
-  // Stores latest coords so the auto-refresh interval can use them
   const coordsRef = useRef<{ lat: number; lon: number } | null>(null)
 
-  // Restore saved location on mount and fetch weather
+  // ── Pixel shift (burn-in prevention) ──────────────────────────────
+  const [shift, setShift] = useState({ x: 0, y: 0 })
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setShift({
+        x: Math.floor(Math.random() * 7) - 3, // –3 to +3 px
+        y: Math.floor(Math.random() * 7) - 3,
+      })
+    }, SHIFT_INTERVAL)
+    return () => clearInterval(interval)
+  }, [])
+
+  // ── Stale-data warning ────────────────────────────────────────────
+  const [isStale, setIsStale] = useState(false)
+  useEffect(() => {
+    function check() {
+      setIsStale(!!lastUpdated && Date.now() - lastUpdated.getTime() > STALE_THRESHOLD)
+    }
+    check()
+    const interval = setInterval(check, 60_000)
+    return () => clearInterval(interval)
+  }, [lastUpdated])
+
+  // ── Data fetching ─────────────────────────────────────────────────
   useEffect(() => {
     const saved = localStorage.getItem(LOCATION_KEY)
     if (saved) {
@@ -33,8 +57,6 @@ export default function HomePage() {
     }
   }, [fetchWeather])
 
-  // When weather coords become available (new city or first load),
-  // fetch forecast and prayer times
   useEffect(() => {
     if (weather?.coord) {
       coordsRef.current = weather.coord
@@ -43,7 +65,6 @@ export default function HomePage() {
     }
   }, [weather?.coord?.lat, weather?.coord?.lon, fetchForecast, fetchPrayer])
 
-  // Auto-refresh all data every 10 minutes
   useEffect(() => {
     if (!savedLocation) return
     const interval = setInterval(() => {
@@ -60,25 +81,39 @@ export default function HomePage() {
     localStorage.setItem(LOCATION_KEY, query)
     setSavedLocation(query)
     await fetchWeather(query)
-    // forecast + prayer load automatically via the coords useEffect above
   }, [fetchWeather])
 
-  const loading = weatherLoading
+  const loading = weatherLoading && !weather // only show skeleton on first load
 
   return (
-    <div className="h-full flex flex-col gap-2 overflow-hidden">
-      {/* Top bar: search + manage */}
+    // Pixel shift wrapper — slow ease so the transition is imperceptible
+    <div
+      className="h-full flex flex-col gap-2 overflow-hidden transition-transform duration-[3000ms] ease-in-out"
+      style={{ transform: `translate(${shift.x}px, ${shift.y}px)` }}
+    >
+      {/* Top bar */}
       <div className="flex items-center justify-end gap-3 shrink-0">
-        <LocationSearch onSearch={handleSearch} loading={loading} initialValue={savedLocation} />
-        <Link href="/school-closings" className="text-slate-400 hover:text-sky-400 text-sm whitespace-nowrap transition-colors">
+        <LocationSearch onSearch={handleSearch} loading={weatherLoading} initialValue={savedLocation} />
+        <Link href="/school-closings" className="text-slate-600 hover:text-sky-400 text-sm whitespace-nowrap transition-colors">
           Manage →
         </Link>
       </div>
 
-      {/* Error */}
-      {weatherError && !loading && (
+      {/* Stale data warning */}
+      {isStale && (
+        <div className="bg-yellow-500/10 border border-yellow-500/30 rounded-xl px-4 py-1.5 shrink-0 flex items-center gap-2">
+          <span className="text-yellow-400 text-sm">⚠</span>
+          <p className="text-yellow-400 text-sm">
+            No internet connection — displaying last known data
+            {lastUpdated && ` (${lastUpdated.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })})`}
+          </p>
+        </div>
+      )}
+
+      {/* Error on first load */}
+      {weatherError && !weather && !weatherLoading && (
         <div className="bg-red-500/10 border border-red-500/30 rounded-xl px-4 py-1.5 shrink-0">
-          <p className="text-red-400 text-xs">{weatherError}</p>
+          <p className="text-red-400 text-sm">{weatherError}</p>
         </div>
       )}
 
@@ -89,7 +124,7 @@ export default function HomePage() {
         </div>
       )}
 
-      {/* Loading skeleton */}
+      {/* Loading skeleton — only on first load */}
       {loading && (
         <div className="flex-1 grid grid-cols-2 gap-2 animate-pulse">
           <div className="flex flex-col gap-2">
@@ -104,15 +139,13 @@ export default function HomePage() {
         </div>
       )}
 
-      {/* Dashboard: 2-column grid */}
+      {/* Dashboard */}
       {weather && !loading && (
         <div className="flex-1 grid grid-cols-2 gap-2 min-h-0 overflow-hidden">
-          {/* Left: current weather + details */}
           <div className="flex flex-col gap-2 min-h-0">
-            <CurrentWeather data={weather} />
+            <CurrentWeather data={weather} lastUpdated={lastUpdated} />
             <WeatherDetails data={weather} />
           </div>
-          {/* Right: forecast + prayer times + school closings */}
           <div className="flex flex-col gap-2 min-h-0">
             {days.length > 0 && <ForecastStrip days={days} />}
             {prayerData && <PrayerTimes data={prayerData} />}
@@ -121,7 +154,6 @@ export default function HomePage() {
         </div>
       )}
 
-      {/* School closings alone when no weather loaded */}
       {!weather && !loading && savedLocation && <SchoolClosingsWidget />}
     </div>
   )

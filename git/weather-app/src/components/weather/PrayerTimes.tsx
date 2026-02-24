@@ -45,7 +45,7 @@ export default function PrayerTimes({ data }: PrayerTimesProps) {
 
   return (
     <div className="bg-slate-800/40 backdrop-blur-md rounded-xl border border-slate-700/50 p-3 shrink-0">
-      <h3 className="text-slate-400 text-sm font-semibold uppercase tracking-widest mb-2">
+      <h3 className="text-slate-600 text-sm font-semibold uppercase tracking-widest mb-2">
         Prayer Times
       </h3>
       <div className="flex gap-2">
