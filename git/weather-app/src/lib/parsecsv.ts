@@ -1,7 +1,7 @@
 import { SchoolClosingRow } from '@/types/schoolClosings'
 
 export function parseCsv(text: string): SchoolClosingRow[] {
-  const lines = text.trim().split('\n').filter(l => l.trim() !== '')
+  const lines = text.replace(/\r\n/g, '\n').replace(/\r/g, '\n').trim().split('\n').filter(l => l.trim() !== '')
   if (lines.length < 2) return []
 
   const headers = lines[0].split(',').map(h => h.trim().toLowerCase().replace(/\s+/g, '_'))

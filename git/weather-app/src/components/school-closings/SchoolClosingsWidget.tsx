@@ -12,16 +12,32 @@ function getTodayStr(): string {
   return `${t.getFullYear()}-${String(t.getMonth() + 1).padStart(2, '0')}-${String(t.getDate()).padStart(2, '0')}`
 }
 
+function parseDate(dateStr: string): Date | null {
+  if (!dateStr) return null
+
+  // YYYY-MM-DD
+  const iso = dateStr.match(/^(\d{4})-(\d{1,2})-(\d{1,2})/)
+  if (iso) {
+    const d = new Date(Number(iso[1]), Number(iso[2]) - 1, Number(iso[3]))
+    return isNaN(d.getTime()) ? null : d
+  }
+
+  // MM/DD/YYYY or M/D/YYYY
+  const us = dateStr.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})/)
+  if (us) {
+    const d = new Date(Number(us[3]), Number(us[1]) - 1, Number(us[2]))
+    return isNaN(d.getTime()) ? null : d
+  }
+
+  return null
+}
+
 function formatDate(dateStr: string): { day: string; date: string } {
-  try {
-    const [year, month, day] = dateStr.split('-').map(Number)
-    const d = new Date(year, month - 1, day)
-    return {
-      day:  d.toLocaleDateString('en-US', { weekday: 'short' }),
-      date: d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
-    }
-  } catch {
-    return { day: '', date: dateStr }
+  const d = parseDate(dateStr)
+  if (!d) return { day: '', date: dateStr }
+  return {
+    day:  d.toLocaleDateString('en-US', { weekday: 'short' }),
+    date: d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
   }
 }
 
