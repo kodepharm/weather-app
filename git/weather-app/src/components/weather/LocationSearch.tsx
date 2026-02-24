@@ -33,13 +33,13 @@ export default function LocationSearch({ onSearch, loading = false, initialValue
         value={query}
         onChange={e => setQuery(e.target.value)}
         placeholder="Enter city name or ZIP code..."
-        className="flex-1 px-4 py-2.5 rounded-xl bg-slate-800/80 border border-slate-600 text-white placeholder-slate-400 focus:outline-none focus:border-sky-400 focus:ring-1 focus:ring-sky-400 transition-all text-sm"
+        className="flex-1 px-4 py-2.5 rounded-xl bg-slate-800/80 border border-slate-600 text-white placeholder-slate-400 focus:outline-none focus:border-sky-400 focus:ring-1 focus:ring-sky-400 transition-all text-base"
         disabled={loading}
       />
       <button
         type="submit"
         disabled={loading || !query.trim()}
-        className="px-5 py-2.5 rounded-xl bg-sky-500 hover:bg-sky-400 disabled:bg-slate-700 disabled:cursor-not-allowed text-white font-medium text-sm transition-colors"
+        className="px-5 py-2.5 rounded-xl bg-sky-500 hover:bg-sky-400 disabled:bg-slate-700 disabled:cursor-not-allowed text-white font-medium text-base transition-colors"
       >
         {loading ? 'Searching...' : 'Search'}
       </button>

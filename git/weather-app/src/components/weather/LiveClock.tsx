@@ -9,8 +9,8 @@ export default function LiveClock() {
 
   return (
     <div className="shrink-0">
-      <p className="text-white text-3xl font-thin tracking-widest leading-none">{timeString}</p>
-      <p className="text-sky-300 text-xs font-medium mt-0.5">{dateString}</p>
+      <p className="text-white text-6xl font-thin tracking-widest leading-none">{timeString}</p>
+      <p className="text-sky-300 text-base font-medium mt-1">{dateString}</p>
     </div>
   )
 }

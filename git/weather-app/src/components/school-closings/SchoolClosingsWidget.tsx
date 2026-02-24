@@ -72,12 +72,12 @@ export default function SchoolClosingsWidget() {
 
   return (
     <div className="bg-slate-800/40 border border-slate-700/50 rounded-xl overflow-hidden flex-1 min-h-0">
-      <div className="flex items-center justify-between px-4 py-2.5 border-b border-slate-700/50">
+      <div className="flex items-center justify-between px-4 py-3 border-b border-slate-700/50">
         <div className="flex items-center gap-2">
-          <span className="text-lg">🏫</span>
-          <h2 className="text-white font-semibold text-sm">School Closings &amp; Events</h2>
+          <span className="text-xl">🏫</span>
+          <h2 className="text-white font-semibold text-lg">School Closings &amp; Events</h2>
         </div>
-        <Link href="/school-closings" className="text-xs text-sky-400 hover:text-sky-300 transition-colors">
+        <Link href="/school-closings" className="text-sm text-sky-400 hover:text-sky-300 transition-colors">
           Manage →
         </Link>
       </div>
@@ -87,13 +87,13 @@ export default function SchoolClosingsWidget() {
           const isToday = event.date === todayStr
           const { day, date } = formatDate(event.date)
           return (
-            <div key={i} className="flex items-center gap-3 px-4 py-2">
-              <div className={`shrink-0 w-16 text-center ${isToday ? 'text-sky-400' : 'text-slate-400'}`}>
-                <p className="text-xs font-semibold uppercase">{isToday ? 'Today' : day}</p>
-                <p className="text-xs">{date}</p>
+            <div key={i} className="flex items-center gap-4 px-4 py-3">
+              <div className={`shrink-0 w-20 text-center ${isToday ? 'text-sky-400' : 'text-slate-400'}`}>
+                <p className="text-sm font-semibold uppercase">{isToday ? 'Today' : day}</p>
+                <p className="text-sm">{date}</p>
               </div>
-              <div className="w-px h-6 bg-slate-700/60 shrink-0" />
-              <p className="text-white text-sm font-medium truncate">{event.notes || event.school_name}</p>
+              <div className="w-px h-8 bg-slate-700/60 shrink-0" />
+              <p className="text-white text-lg font-medium truncate">{event.notes || event.school_name}</p>
             </div>
           )
         })}

@@ -27,7 +27,6 @@ function getActivePrayer(times: { time: string }[], now: Date): { active: number
   for (let i = 0; i < prayerMins.length; i++) {
     if (currentMins >= prayerMins[i]) active = i
   }
-  // Before Fajr — Isha from previous day is still "active"
   if (active === -1) active = times.length - 1
 
   const next = (active + 1) % times.length
@@ -37,7 +36,6 @@ function getActivePrayer(times: { time: string }[], now: Date): { active: number
 export default function PrayerTimes({ data }: PrayerTimesProps) {
   const [now, setNow] = useState(new Date())
 
-  // Re-evaluate active/next prayer every minute
   useEffect(() => {
     const interval = setInterval(() => setNow(new Date()), 60_000)
     return () => clearInterval(interval)
@@ -47,7 +45,7 @@ export default function PrayerTimes({ data }: PrayerTimesProps) {
 
   return (
     <div className="bg-slate-800/40 backdrop-blur-md rounded-xl border border-slate-700/50 p-3 shrink-0">
-      <h3 className="text-slate-400 text-xs font-semibold uppercase tracking-widest mb-2">
+      <h3 className="text-slate-400 text-sm font-semibold uppercase tracking-widest mb-2">
         Prayer Times
       </h3>
       <div className="flex gap-2">
@@ -57,7 +55,7 @@ export default function PrayerTimes({ data }: PrayerTimesProps) {
           return (
             <div
               key={prayer.name}
-              className={`flex-1 rounded-xl p-2 flex flex-col items-center gap-0.5 border ${
+              className={`flex-1 rounded-xl p-2.5 flex flex-col items-center gap-0.5 border ${
                 isActive
                   ? 'bg-sky-500/20 border-sky-500/40'
                   : isNext
@@ -65,15 +63,15 @@ export default function PrayerTimes({ data }: PrayerTimesProps) {
                   : 'bg-slate-800/60 border-slate-700/50'
               }`}
             >
-              <p className="text-slate-400 text-xs font-medium">{prayer.arabicName}</p>
-              <p className="text-slate-300 text-[10px] font-semibold uppercase tracking-wide">{prayer.name}</p>
-              <p className={`text-sm font-medium mt-0.5 ${
+              <p className="text-slate-400 text-sm font-medium">{prayer.arabicName}</p>
+              <p className="text-slate-300 text-xs font-semibold uppercase tracking-wide">{prayer.name}</p>
+              <p className={`text-lg font-medium mt-0.5 ${
                 isActive ? 'text-sky-300' : isNext ? 'text-emerald-400' : 'text-white'
               }`}>
                 {formatPrayerTime(prayer.time)}
               </p>
-              {isActive && <p className="text-sky-400 text-[9px] font-semibold">Now</p>}
-              {isNext && <p className="text-emerald-400 text-[9px] font-semibold">Next</p>}
+              {isActive && <p className="text-sky-400 text-xs font-semibold">Now</p>}
+              {isNext && <p className="text-emerald-400 text-xs font-semibold">Next</p>}
             </div>
           )
         })}

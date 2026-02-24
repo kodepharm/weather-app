@@ -24,13 +24,13 @@ export default function WeatherDetails({ data }: WeatherDetailsProps) {
   ]
 
   return (
-    <div className="bg-slate-800/60 backdrop-blur-md rounded-xl border border-slate-700/50 p-3 flex-1 min-h-0">
-      <h3 className="text-slate-400 text-xs font-semibold uppercase tracking-widest mb-2">Details</h3>
-      <div className="grid grid-cols-3 gap-2">
+    <div className="bg-slate-800/60 backdrop-blur-md rounded-xl border border-slate-700/50 p-4 flex-1 min-h-0">
+      <h3 className="text-slate-400 text-sm font-semibold uppercase tracking-widest mb-3">Details</h3>
+      <div className="grid grid-cols-3 gap-3">
         {details.map(({ label, value, icon }) => (
-          <div key={label} className="bg-slate-700/40 rounded-lg p-2">
-            <p className="text-slate-400 text-xs mb-0.5">{icon} {label}</p>
-            <p className="text-white text-sm font-medium">{value}</p>
+          <div key={label} className="bg-slate-700/40 rounded-lg p-3">
+            <p className="text-slate-400 text-sm mb-1">{icon} {label}</p>
+            <p className="text-white text-lg font-medium">{value}</p>
           </div>
         ))}
       </div>
