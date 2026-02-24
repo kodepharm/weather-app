@@ -1,6 +1,6 @@
 'use client'
 
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import Link from 'next/link'
 import LiveClock from '@/components/weather/LiveClock'
 import LocationSearch from '@/components/weather/LocationSearch'
@@ -19,40 +19,52 @@ const REFRESH_INTERVAL = 10 * 60 * 1000 // 10 minutes
 export default function HomePage() {
   const [savedLocation, setSavedLocation] = useState('')
   const { data: weather, loading: weatherLoading, error: weatherError, fetchWeather } = useWeather()
-  const { days, loading: forecastLoading, error: forecastError, fetchForecast } = useForecast()
+  const { days, fetchForecast } = useForecast()
   const { data: prayerData, fetchPrayer } = usePrayer()
 
+  // Stores latest coords so the auto-refresh interval can use them
+  const coordsRef = useRef<{ lat: number; lon: number } | null>(null)
+
+  // Restore saved location on mount and fetch weather
   useEffect(() => {
     const saved = localStorage.getItem(LOCATION_KEY)
     if (saved) {
       setSavedLocation(saved)
-      Promise.all([fetchWeather(saved), fetchForecast(saved)])
+      fetchWeather(saved)
     }
-  }, [fetchWeather, fetchForecast])
+  }, [fetchWeather])
 
-  // Fetch prayer times whenever weather coordinates change
+  // When weather coords become available (new city or first load),
+  // fetch forecast and prayer times
   useEffect(() => {
     if (weather?.coord) {
+      coordsRef.current = weather.coord
+      fetchForecast(weather.coord.lat, weather.coord.lon)
       fetchPrayer(weather.coord.lat, weather.coord.lon)
     }
-  }, [weather?.coord?.lat, weather?.coord?.lon, fetchPrayer])
+  }, [weather?.coord?.lat, weather?.coord?.lon, fetchForecast, fetchPrayer])
 
-  // Auto-refresh weather every 10 minutes
+  // Auto-refresh all data every 10 minutes
   useEffect(() => {
     if (!savedLocation) return
     const interval = setInterval(() => {
-      Promise.all([fetchWeather(savedLocation), fetchForecast(savedLocation)])
+      fetchWeather(savedLocation)
+      if (coordsRef.current) {
+        fetchForecast(coordsRef.current.lat, coordsRef.current.lon)
+        fetchPrayer(coordsRef.current.lat, coordsRef.current.lon)
+      }
     }, REFRESH_INTERVAL)
     return () => clearInterval(interval)
-  }, [savedLocation, fetchWeather, fetchForecast])
+  }, [savedLocation, fetchWeather, fetchForecast, fetchPrayer])
 
   const handleSearch = useCallback(async (query: string) => {
     localStorage.setItem(LOCATION_KEY, query)
     setSavedLocation(query)
-    await Promise.all([fetchWeather(query), fetchForecast(query)])
-  }, [fetchWeather, fetchForecast])
+    await fetchWeather(query)
+    // forecast + prayer load automatically via the coords useEffect above
+  }, [fetchWeather])
 
-  const loading = weatherLoading || forecastLoading
+  const loading = weatherLoading
 
   return (
     <div className="h-full flex flex-col gap-2 overflow-hidden">
@@ -68,9 +80,9 @@ export default function HomePage() {
       </div>
 
       {/* Error */}
-      {(weatherError || forecastError) && !loading && (
+      {weatherError && !loading && (
         <div className="bg-red-500/10 border border-red-500/30 rounded-xl px-4 py-1.5 shrink-0">
-          <p className="text-red-400 text-xs">{weatherError || forecastError}</p>
+          <p className="text-red-400 text-xs">{weatherError}</p>
         </div>
       )}
 
@@ -90,6 +102,7 @@ export default function HomePage() {
           </div>
           <div className="flex flex-col gap-2">
             <div className="h-36 bg-slate-800/40 rounded-xl" />
+            <div className="h-28 bg-slate-800/40 rounded-xl" />
             <div className="flex-1 bg-slate-800/40 rounded-xl" />
           </div>
         </div>
