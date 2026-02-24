@@ -2,7 +2,6 @@
 
 import { useCallback, useEffect, useRef, useState } from 'react'
 import Link from 'next/link'
-import LiveClock from '@/components/weather/LiveClock'
 import LocationSearch from '@/components/weather/LocationSearch'
 import CurrentWeather from '@/components/weather/CurrentWeather'
 import WeatherDetails from '@/components/weather/WeatherDetails'
@@ -68,15 +67,12 @@ export default function HomePage() {
 
   return (
     <div className="h-full flex flex-col gap-2 overflow-hidden">
-      {/* Top bar: clock left, search + manage right */}
-      <div className="flex items-center justify-between gap-4 shrink-0">
-        <LiveClock />
-        <div className="flex items-center gap-3">
-          <LocationSearch onSearch={handleSearch} loading={loading} initialValue={savedLocation} />
-          <Link href="/school-closings" className="text-slate-400 hover:text-sky-400 text-xs whitespace-nowrap transition-colors">
-            Manage →
-          </Link>
-        </div>
+      {/* Top bar: search + manage */}
+      <div className="flex items-center justify-end gap-3 shrink-0">
+        <LocationSearch onSearch={handleSearch} loading={loading} initialValue={savedLocation} />
+        <Link href="/school-closings" className="text-slate-400 hover:text-sky-400 text-sm whitespace-nowrap transition-colors">
+          Manage →
+        </Link>
       </div>
 
       {/* Error */}

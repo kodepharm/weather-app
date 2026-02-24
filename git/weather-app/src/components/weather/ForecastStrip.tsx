@@ -13,7 +13,7 @@ export default function ForecastStrip({ days }: ForecastStripProps) {
       <h3 className="text-slate-400 text-sm font-semibold uppercase tracking-widest mb-2">
         7-Day Forecast
       </h3>
-      <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-thin scrollbar-thumb-slate-600 scrollbar-track-transparent">
+      <div className="grid grid-cols-7 gap-2">
         {days.map(day => (
           <ForecastCard key={day.date} day={day} />
         ))}

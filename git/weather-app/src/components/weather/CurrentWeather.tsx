@@ -1,6 +1,9 @@
+'use client'
+
 import { CurrentWeatherData } from '@/types/weather'
 import WeatherIcon from './WeatherIcon'
 import { formatTemp, capitalizeWords } from '@/lib/formatters'
+import { useClock } from '@/hooks/useClock'
 
 interface CurrentWeatherProps {
   data: CurrentWeatherData
@@ -9,9 +12,19 @@ interface CurrentWeatherProps {
 export default function CurrentWeather({ data }: CurrentWeatherProps) {
   const { name, sys, main, weather } = data
   const condition = weather[0]
+  const { dateString, timeString } = useClock()
 
   return (
     <div className="bg-slate-800/60 backdrop-blur-md rounded-xl border border-slate-700/50 p-5 text-center shrink-0">
+      {/* Clock */}
+      {dateString && (
+        <div className="border-b border-slate-700/50 pb-3 mb-4">
+          <p className="text-sky-300 text-base font-medium">{dateString}</p>
+          <p className="text-white text-6xl font-thin tracking-widest leading-tight">{timeString}</p>
+        </div>
+      )}
+
+      {/* Weather */}
       <p className="text-slate-300 text-base font-medium uppercase tracking-widest mb-1">
         {name}, {sys.country}
       </p>
