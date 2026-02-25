@@ -75,8 +75,8 @@ export default function CurrentWeather({ data, lastUpdated }: CurrentWeatherProp
         <div className="grid grid-cols-2 gap-2">
           {details.map(({ label, value, icon }) => (
             <div key={label} className="bg-slate-700/40 rounded-lg p-3">
-              <p className="text-slate-500 text-xs mb-1">{icon} {label}</p>
-              <p className="text-slate-200 text-base font-medium">{value}</p>
+              <p className="text-slate-500 text-sm mb-1">{icon} {label}</p>
+              <p className="text-slate-200 text-xl font-medium">{value}</p>
             </div>
           ))}
         </div>
