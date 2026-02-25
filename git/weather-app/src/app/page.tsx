@@ -4,7 +4,6 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 import Link from 'next/link'
 import LocationSearch from '@/components/weather/LocationSearch'
 import CurrentWeather from '@/components/weather/CurrentWeather'
-import WeatherDetails from '@/components/weather/WeatherDetails'
 import ForecastStrip from '@/components/weather/ForecastStrip'
 import PrayerTimes from '@/components/weather/PrayerTimes'
 import SchoolClosingsWidget from '@/components/school-closings/SchoolClosingsWidget'
@@ -144,10 +143,9 @@ export default function HomePage() {
         <div className="flex-1 grid grid-cols-2 gap-2 min-h-0 overflow-hidden">
           <div className="flex flex-col gap-2 min-h-0">
             <CurrentWeather data={weather} lastUpdated={lastUpdated} />
-            <WeatherDetails data={weather} />
+            {days.length > 0 && <ForecastStrip days={days} />}
           </div>
           <div className="flex flex-col gap-2 min-h-0">
-            {days.length > 0 && <ForecastStrip days={days} />}
             {prayerData && <PrayerTimes data={prayerData} />}
             <SchoolClosingsWidget />
           </div>

@@ -56,8 +56,8 @@ interface OpenMeteoResponse {
 }
 
 export async function fetchForecastByCoords(lat: number, lon: number): Promise<ForecastResponse> {
-  // fetch_days=8 so we always have 7 future days after skipping today
-  const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&daily=weathercode,temperature_2m_max,temperature_2m_min&forecast_days=8&temperature_unit=fahrenheit&timezone=auto`
+  // fetch_days=7 so we always have 6 future days after skipping today
+  const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&daily=weathercode,temperature_2m_max,temperature_2m_min&forecast_days=7&temperature_unit=fahrenheit&timezone=auto`
   const res = await fetch(url, { next: { revalidate: 3600 } })
   if (!res.ok) throw new Error(`Forecast fetch failed: ${res.status}`)
 
@@ -68,7 +68,7 @@ export async function fetchForecastByCoords(lat: number, lon: number): Promise<F
   for (let i = 0; i < data.daily.time.length; i++) {
     const date = data.daily.time[i]
     if (date === todayStr) continue
-    if (days.length >= 7) break
+    if (days.length >= 6) break
 
     const code = data.daily.weathercode[i]
     const dateLabel = new Date(date + 'T12:00:00').toLocaleDateString('en-US', {

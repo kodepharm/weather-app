@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react'
 import { CurrentWeatherData } from '@/types/weather'
 import WeatherIcon from './WeatherIcon'
-import { formatTemp, capitalizeWords } from '@/lib/formatters'
+import { formatTemp, capitalizeWords, formatWind, formatTime, formatVisibility } from '@/lib/formatters'
 import { useClock } from '@/hooks/useClock'
 
 interface CurrentWeatherProps {
@@ -19,8 +19,17 @@ function getLastUpdatedLabel(lastUpdated: Date, now: Date): string {
 }
 
 export default function CurrentWeather({ data, lastUpdated }: CurrentWeatherProps) {
-  const { name, sys, main, weather } = data
+  const { name, sys, main, weather, wind, visibility, timezone } = data
   const condition = weather[0]
+
+  const details = [
+    { label: 'Humidity',   value: `${main.humidity}%`,                    icon: '💧' },
+    { label: 'Wind',       value: formatWind(wind.speed, wind.deg),        icon: '💨' },
+    { label: 'Pressure',   value: `${main.pressure} hPa`,                 icon: '🌡' },
+    { label: 'Visibility', value: formatVisibility(visibility),            icon: '👁' },
+    { label: 'Sunrise',    value: formatTime(sys.sunrise, timezone),       icon: '🌅' },
+    { label: 'Sunset',     value: formatTime(sys.sunset, timezone),        icon: '🌇' },
+  ]
   const { dateString, timeString } = useClock()
 
   // Ticks every minute to keep "X min ago" accurate
@@ -31,7 +40,7 @@ export default function CurrentWeather({ data, lastUpdated }: CurrentWeatherProp
   }, [])
 
   return (
-    <div className="bg-slate-800/60 backdrop-blur-md rounded-xl border border-slate-700/50 p-5 text-center shrink-0">
+    <div className="bg-slate-800/60 backdrop-blur-md rounded-xl border border-slate-700/50 p-5 text-center shrink-0 flex flex-col gap-0">
       {/* Clock */}
       {dateString && (
         <div className="border-b border-slate-700/50 pb-3 mb-4">
@@ -59,6 +68,19 @@ export default function CurrentWeather({ data, lastUpdated }: CurrentWeatherProp
           {getLastUpdatedLabel(lastUpdated, minuteNow)}
         </p>
       )}
+
+      {/* Details grid */}
+      <div className="border-t border-slate-700/50 mt-4 pt-4">
+        <h3 className="text-slate-600 text-xs font-semibold uppercase tracking-widest mb-3 text-left">Details</h3>
+        <div className="grid grid-cols-3 gap-2">
+          {details.map(({ label, value, icon }) => (
+            <div key={label} className="bg-slate-700/40 rounded-lg p-2.5 text-left">
+              <p className="text-slate-500 text-xs mb-1">{icon} {label}</p>
+              <p className="text-slate-200 text-base font-medium">{value}</p>
+            </div>
+          ))}
+        </div>
+      </div>
     </div>
   )
 }
