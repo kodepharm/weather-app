@@ -40,26 +40,24 @@ export default function CurrentWeather({ data, lastUpdated }: CurrentWeatherProp
   }, [])
 
   return (
-    <div className="bg-slate-800/60 backdrop-blur-md rounded-xl border border-slate-700/50 p-5 text-center flex-1 min-h-0 flex flex-col">
-      {/* Clock — pinned top */}
-      {dateString && (
-        <div className="border-b border-slate-700/50 pb-3 mb-3 shrink-0">
-          <p className="text-sky-300 text-base font-medium">{dateString}</p>
-          <p className="text-white text-6xl font-thin tracking-widest leading-tight">{timeString}</p>
-        </div>
-      )}
-
-      {/* Weather — grows to fill available space */}
-      <div className="flex-1 flex flex-col items-center justify-center">
-        <p className="text-slate-400 text-base font-medium uppercase tracking-widest mb-1">
+    <div className="bg-slate-800/60 backdrop-blur-md rounded-xl border border-slate-700/50 p-5 flex-1 min-h-0 flex gap-5">
+      {/* Left — clock + live temperature */}
+      <div className="flex-1 flex flex-col items-center justify-center text-center min-w-0">
+        {dateString && (
+          <>
+            <p className="text-sky-300 text-base font-medium">{dateString}</p>
+            <p className="text-white text-6xl font-thin tracking-widest leading-tight mb-3">{timeString}</p>
+          </>
+        )}
+        <p className="text-slate-400 text-sm font-medium uppercase tracking-widest mb-1">
           {name}, {sys.country}
         </p>
-        <div className="flex items-center justify-center gap-3 mt-1">
-          <WeatherIcon icon={condition.icon} description={condition.description} size={80} />
-          <span className="text-sky-200 text-8xl font-thin">{formatTemp(main.temp)}</span>
+        <div className="flex items-center justify-center gap-2">
+          <WeatherIcon icon={condition.icon} description={condition.description} size={72} />
+          <span className="text-sky-200 text-7xl font-thin">{formatTemp(main.temp)}</span>
         </div>
-        <p className="text-slate-300 text-2xl mt-2 capitalize">{capitalizeWords(condition.description)}</p>
-        <p className="text-slate-500 text-base mt-1">
+        <p className="text-slate-300 text-xl mt-2 capitalize">{capitalizeWords(condition.description)}</p>
+        <p className="text-slate-500 text-sm mt-1">
           Feels like {formatTemp(main.feels_like)} &middot; H:{formatTemp(main.temp_max)} L:{formatTemp(main.temp_min)}
         </p>
         {lastUpdated && (
@@ -69,11 +67,14 @@ export default function CurrentWeather({ data, lastUpdated }: CurrentWeatherProp
         )}
       </div>
 
-      {/* Details grid — pinned bottom */}
-      <div className="border-t border-slate-700/50 pt-3 shrink-0">
-        <div className="grid grid-cols-3 gap-2">
+      {/* Vertical divider */}
+      <div className="w-px self-stretch bg-slate-700/50 shrink-0" />
+
+      {/* Right — details */}
+      <div className="flex-1 flex flex-col justify-center min-w-0">
+        <div className="grid grid-cols-2 gap-2">
           {details.map(({ label, value, icon }) => (
-            <div key={label} className="bg-slate-700/40 rounded-lg p-2.5 text-left">
+            <div key={label} className="bg-slate-700/40 rounded-lg p-3">
               <p className="text-slate-500 text-xs mb-1">{icon} {label}</p>
               <p className="text-slate-200 text-base font-medium">{value}</p>
             </div>
