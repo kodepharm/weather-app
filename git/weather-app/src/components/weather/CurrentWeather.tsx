@@ -45,8 +45,8 @@ export default function CurrentWeather({ data, lastUpdated }: CurrentWeatherProp
       <div className="flex-1 flex flex-col items-center justify-center text-center min-w-0">
         {dateString && (
           <>
-            <p className="text-sky-300 text-base font-medium">{dateString}</p>
-            <p className="text-white text-6xl font-thin tracking-widest leading-tight mb-3">{timeString}</p>
+            <p className="text-sky-300 text-base font-bold">{dateString}</p>
+            <p className="text-white text-6xl font-bold tracking-widest leading-tight mb-3">{timeString}</p>
           </>
         )}
         <p className="text-slate-400 text-sm font-medium uppercase tracking-widest mb-1">
@@ -54,7 +54,7 @@ export default function CurrentWeather({ data, lastUpdated }: CurrentWeatherProp
         </p>
         <div className="flex items-center justify-center gap-2">
           <WeatherIcon icon={condition.icon} description={condition.description} size={72} />
-          <span className="text-sky-200 text-7xl font-thin">{formatTemp(main.temp)}</span>
+          <span className="text-sky-200 text-7xl font-bold">{formatTemp(main.temp)}</span>
         </div>
         <p className="text-slate-300 text-xl mt-2 capitalize">{capitalizeWords(condition.description)}</p>
         <p className="text-slate-500 text-sm mt-1">

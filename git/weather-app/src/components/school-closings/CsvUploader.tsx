@@ -6,10 +6,11 @@ import { parseCsv } from '@/lib/parsecsv'
 
 interface CsvUploaderProps {
   onData: (rows: SchoolClosingRow[]) => void
+  onFile?: (file: File) => void
   hasExistingData?: boolean
 }
 
-export default function CsvUploader({ onData, hasExistingData = false }: CsvUploaderProps) {
+export default function CsvUploader({ onData, onFile, hasExistingData = false }: CsvUploaderProps) {
   const [dragging, setDragging] = useState(false)
   const [fileName, setFileName] = useState<string | null>(null)
   const [error, setError] = useState<string | null>(null)
@@ -22,6 +23,7 @@ export default function CsvUploader({ onData, hasExistingData = false }: CsvUplo
     }
     setError(null)
     setFileName(file.name)
+    onFile?.(file)
     const reader = new FileReader()
     reader.onload = e => {
       const text = e.target?.result as string

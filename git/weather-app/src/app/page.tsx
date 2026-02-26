@@ -1,8 +1,7 @@
 'use client'
 
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import Link from 'next/link'
-import LocationSearch from '@/components/weather/LocationSearch'
 import CurrentWeather from '@/components/weather/CurrentWeather'
 import ForecastStrip from '@/components/weather/ForecastStrip'
 import PrayerTimes from '@/components/weather/PrayerTimes'
@@ -76,12 +75,6 @@ export default function HomePage() {
     return () => clearInterval(interval)
   }, [savedLocation, fetchWeather, fetchForecast, fetchPrayer])
 
-  const handleSearch = useCallback(async (query: string) => {
-    localStorage.setItem(LOCATION_KEY, query)
-    setSavedLocation(query)
-    await fetchWeather(query)
-  }, [fetchWeather])
-
   const loading = weatherLoading && !weather // only show skeleton on first load
 
   return (
@@ -91,8 +84,7 @@ export default function HomePage() {
       style={{ transform: `translate(${shift.x}px, ${shift.y}px)` }}
     >
       {/* Top bar */}
-      <div className="flex items-center justify-end gap-3 shrink-0">
-        <LocationSearch onSearch={handleSearch} loading={weatherLoading} initialValue={savedLocation} />
+      <div className="flex items-center justify-end shrink-0">
         <Link href="/school-closings" className="text-slate-600 hover:text-sky-400 text-sm whitespace-nowrap transition-colors">
           Manage →
         </Link>
@@ -119,7 +111,7 @@ export default function HomePage() {
       {/* No location yet */}
       {!weather && !loading && !savedLocation && (
         <div className="flex-1 flex items-center justify-center">
-          <p className="text-slate-500 text-sm">Enter a city name or ZIP code above to get started</p>
+          <p className="text-slate-500 text-sm">Go to <Link href="/school-closings" className="text-sky-400 hover:text-sky-300">Manage</Link> to set your location</p>
         </div>
       )}
 
