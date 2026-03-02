@@ -56,7 +56,7 @@ export default function CurrentWeather({ data, lastUpdated }: CurrentWeatherProp
           </p>
           <div className="flex items-center justify-center gap-2">
             <WeatherIcon icon={condition.icon} description={condition.description} size={64} />
-            <span className="text-sky-200 text-5xl font-bold">{formatTemp(main.temp)}</span>
+            <span className="text-sky-200 text-[4.2rem] font-bold leading-none">{formatTemp(main.temp)}</span>
           </div>
           <p className="text-slate-300 text-lg mt-1 capitalize">{capitalizeWords(condition.description)}</p>
         </div>

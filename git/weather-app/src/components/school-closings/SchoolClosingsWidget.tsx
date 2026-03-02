@@ -5,7 +5,7 @@ import Link from 'next/link'
 import { SchoolClosingRow } from '@/types/schoolClosings'
 
 const CLOSINGS_KEY = 'school_closings_data'
-const MAX_EVENTS = 10
+const MAX_EVENTS = 12
 
 function getTodayStr(): string {
   const t = new Date()
