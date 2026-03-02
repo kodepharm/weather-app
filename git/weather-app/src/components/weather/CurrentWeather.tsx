@@ -45,7 +45,7 @@ export default function CurrentWeather({ data, lastUpdated }: CurrentWeatherProp
       <div className="flex-1 flex flex-col items-center justify-center text-center min-w-0">
         {dateString && (
           <>
-            <p className="text-sky-300 text-base font-bold">{dateString}</p>
+            <p className="text-sky-300 text-6xl font-bold tracking-widest leading-tight">{dateString}</p>
             <p className="text-white text-6xl font-bold tracking-widest leading-tight mb-3">{timeString}</p>
           </>
         )}
