@@ -14,9 +14,9 @@ export function useClock(): ClockState {
     function tick() {
       const now = new Date()
       const dateString = now.toLocaleDateString('en-US', {
-        weekday: 'long',
+        weekday: 'short',
         year: 'numeric',
-        month: 'long',
+        month: 'short',
         day: 'numeric',
       })
       const timeString = now.toLocaleTimeString('en-US', {
